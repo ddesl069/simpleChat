@@ -68,6 +68,9 @@ public class ChatClient extends AbstractClient
   {
     try
     {
+    	if(message.startsWith("#")) {
+    		holdMessage(message);
+    	}
       sendToServer(message);
     }
     catch(IOException e)
@@ -90,5 +93,56 @@ public class ChatClient extends AbstractClient
     catch(IOException e) {}
     System.exit(0);
   }
+  /**
+	 * Hook method called after the connection has been closed. The default
+	 * implementation does nothing. The method may be overriden by subclasses to
+	 * perform special processing such as cleaning up and terminating, or
+	 * attempting to reconnect.
+	 */
+	protected void connectionClosed() {
+		clientUI.display("Conncection is closed");
+		quit();
+		
+	}
+	/**
+	 * Hook method called each time an exception is thrown by the client's
+	 * thread that is waiting for messages from the server. The method may be
+	 * overridden by subclasses.
+	 * 
+	 * @param exception
+	 *            the exception raised.
+	 */
+	protected void connectionException(Exception exception) {
+		System.out.print("Unable to connect to client");
+	}
+	void holdMessage(String message) throws IOException{
+		if(message.equals("#quit")) {
+			quit();
+		}else if(message.equals("#logoff")) {
+			closeConnection();
+		}else if(message.equals("#sethost")) {
+			if(isConnected()==false) {
+				setHost(message.substring(9));
+			}else {
+				clientUI.display("you are still connected");
+			}
+		}else if(message.equals("#setport")) {
+			if(isConnected() == false) {
+				setPort(Integer.parseInt(message.substring(9)));
+			}else {
+				clientUI.display("you are still connected");
+			}
+		}else if(message.equals("#login")) {
+			if(isConnected()== false) {
+				openConnection();
+			}else {
+				clientUI.display("error already connnected");
+			}
+		}else if(message.equals("#gethost")) {
+			getHost();
+		}else if(message.equals("#getport")) {
+			getPort();
+		}
+	}
 }
 //End of ChatClient class

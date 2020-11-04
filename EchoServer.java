@@ -22,7 +22,7 @@ public class EchoServer extends AbstractServer
   /**
    * The default port to listen on.
    */
-	ServerConsole sv;
+ServerConsole sv;
   final public static int DEFAULT_PORT = 5555;
   
   //Constructors ****************************************************
@@ -36,7 +36,9 @@ public class EchoServer extends AbstractServer
   {
     super(port);
   }
-
+  public void setSV(ServerConsole sv) {
+	  this.sv = sv;
+  }
   
   //Instance methods ************************************************
   
@@ -66,7 +68,14 @@ public class EchoServer extends AbstractServer
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
-  
+  public void handleMessageFromUser(String message) throws IOException {
+	  if(message.substring(12).startsWith("#")) {
+		  function(message.substring(12));
+	  }else {
+		  sendToAllClients(message);
+			  sv.display("Message sent: +"+ message);
+	  }
+  }
     
   /**
    * This method overrides the one in the superclass.  Called
@@ -121,9 +130,7 @@ public class EchoServer extends AbstractServer
     ConnectionToClient client, Throwable exception) {
 	  sendToAllClients("client has disconected");
   }
-  public void setConsole() {
-	  this.sv = sv;
-  }
+  
   public void function(String msg) throws IOException {
 	  if(msg.equals("#quit")) {
 		  close();

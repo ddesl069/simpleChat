@@ -52,17 +52,15 @@ public class ClientConsole implements ChatIF
    */
   public ClientConsole(String loginID, String host, int port) 
   {
+	  client= new ChatClient(loginID, host, port, this);
     try 
     {
-      client= new ChatClient(loginID, host, port, this);
-      
+      client.function();
       
     } 
     catch(IOException exception) 
     {
-      System.out.println("Error: Can't setup connection!"
-                + " Terminating client.");
-      System.exit(1);
+      System.out.println("cannot open connection. Awaiting connection");
     }
     
     // Create scanner object to read from console
@@ -125,8 +123,8 @@ public class ClientConsole implements ChatIF
 
     try
     {
-      if(args[0].equals("")) {
-    	  System.out.println("enter a valis login ID");
+      if(args.length<1) {
+    	  System.out.println("enter a valid login ID");
     	  System.exit(0);
       }else {
     	  loginID = args[0];

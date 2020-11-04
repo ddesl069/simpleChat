@@ -8,7 +8,7 @@ public class ServerConsole implements ChatIF{
 		this.sv = sv;
 		fromConsole = new Scanner(System.in);
 	}
-	@Override
+	
 	public void display(String message) {
 		// TODO Auto-generated method stub
 		System.out.println(">" + message);
@@ -28,7 +28,7 @@ public class ServerConsole implements ChatIF{
 		
 	    EchoServer sv = new EchoServer(port);
 	    ServerConsole sc = new ServerConsole(sv);
-	    
+	    sv.setSV(sc);
 	    try 
 	    {
 	      sv.listen(); //Start listening for connections

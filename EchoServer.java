@@ -42,6 +42,7 @@ ServerConsole sv;
   
   //Instance methods ************************************************
   
+  
   /**
    * This method handles any messages received from the client.
    *
@@ -51,26 +52,27 @@ ServerConsole sv;
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
+	  sv.display("Message received: " + msg + " from " + client.getInfo("login_id"));
 	  if(msg.toString().startsWith("#login ")) {
 		  if(client.getInfo("login_id")==null) {
 			  client.setInfo("login_id", msg.toString().substring(7));
-			  this.sendToAllClients(client.getInfo("login_id")+ "has id");
-			  sv.display(client.getInfo("login_id")+ "has logged in");
+			  this.sendToAllClients(client.getInfo("login_id")+ " has logged in");
+			  sv.display(client.getInfo("login_id")+ " has logged in");
 		  }else {
 			  try {
 				  client.close();
 			  }catch (IOException e) {}
 		  }
 	  }else {
-		  this.sendToAllClients(client.getInfo("login_id")+ ":"+ sv);
+		  this.sendToAllClients(client.getInfo("login_id")+ " : "+ msg.toString());
 	  }
 	  
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    
+
   }
   public void handleMessageFromUser(String message) throws IOException {
-	  if(message.substring(12).startsWith("#")) {
-		  function(message.substring(12));
+	  if(message.substring(15).startsWith("#")) {
+		  function(message.substring(15));
 	  }else {
 		  sendToAllClients(message);
 			  sv.display("Message sent: +"+ message);
@@ -102,7 +104,7 @@ ServerConsole sv;
    * @param client the connection connected to the client.
    */
   protected void clientConnected(ConnectionToClient client) {
-	  sendToAllClients("Connected to client " +client.toString() );
+	  sv.display("A new client is attempting to connect to the server");
   }
 
   /**

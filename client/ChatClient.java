@@ -53,7 +53,7 @@ public class ChatClient extends AbstractClient
   //Instance methods ************************************************
    public void function() throws IOException {
 	   openConnection();
-	    handleMessageFromClientUI("#loginID" + loginID);
+	    handleMessageFromClientUI("#login " + loginID);
    }
   /**
    * This method handles all data that comes in from the server.
@@ -74,7 +74,8 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-    	if(message.startsWith("#")) {
+    	if(message.startsWith("#")&& !message.startsWith("#login ")) {
+    		clientUI.display(message);
     		holdMessage(message);
     	}
       sendToServer(message);
@@ -121,7 +122,7 @@ public class ChatClient extends AbstractClient
 	protected void connectionException(Exception exception) {
 		System.out.print("Unable to connect to client");
 	}
-	void holdMessage(String message) throws IOException{
+	public void holdMessage(String message) throws IOException{
 		if(message.equals("#quit")) {
 			quit();
 		}else if(message.equals("#logoff")) {

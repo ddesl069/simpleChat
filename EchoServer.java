@@ -22,6 +22,7 @@ public class EchoServer extends AbstractServer
   /**
    * The default port to listen on.
    */
+	ServerConsole sv;
   final public static int DEFAULT_PORT = 5555;
   
   //Constructors ****************************************************
@@ -48,9 +49,24 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
+	  if(msg.toString().startsWith("#login ")) {
+		  if(client.getInfo("login_id")==null) {
+			  client.setInfo("login_id", msg.toString().substring(7));
+			  this.sendToAllClients(client.getInfo("login_id")+ "has id");
+			  sv.display(client.getInfo("login_id")+ "has logged in");
+		  }else {
+			  try {
+				  client.close();
+			  }catch (IOException e) {}
+		  }
+	  }else {
+		  this.sendToAllClients(client.getInfo("login_id")+ ":"+ sv);
+	  }
+	  
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
+  
     
   /**
    * This method overrides the one in the superclass.  Called
@@ -104,6 +120,34 @@ public class EchoServer extends AbstractServer
   synchronized protected void clientException(
     ConnectionToClient client, Throwable exception) {
 	  sendToAllClients("client has disconected");
+  }
+  public void setConsole() {
+	  this.sv = sv;
+  }
+  public void function(String msg) throws IOException {
+	  if(msg.equals("#quit")) {
+		  close();
+	  }else if (msg.equals("#stop")) {
+		  stopListening();
+	  }else if(msg.equals("#close")) {
+		  close();
+	  }else if(msg.equals("sethost")) {
+		if(isListening()==false) {
+			if(msg.length()>= 10) {
+				setPort(Integer.parseInt(msg.substring(9)));
+			}else {
+				sv.display("not a valid host");
+			}
+		}  
+	  }else if(msg.equals("#start")) {
+		  if(isListening()==false) {
+			  listen();
+		  }else {
+			  sv.display("server is already on");
+		  }
+	  }else if(msg.equals("#getport")) {
+		  sv.display(Integer.toString(getPort()));
+	  }
   }
   
   //Class methods ***************************************************

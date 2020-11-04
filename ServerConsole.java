@@ -37,6 +37,7 @@ public class ServerConsole implements ChatIF{
 	    {
 	      System.out.println("ERROR - Could not listen for clients!");
 	    }
+	    sc.accept();
 	}
 	public void accept() 
 	  {

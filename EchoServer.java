@@ -70,7 +70,7 @@ ServerConsole sv;
     
 
   }
-  public void handleMessageFromUser(String message) throws IOException {
+  public void handleMessageFromUser(String message) throws IOException{
 	  if(message.substring(15).startsWith("#")) {
 		  function(message.substring(15));
 	  }else {
@@ -116,7 +116,7 @@ ServerConsole sv;
    */
   synchronized protected void clientDisconnected(
     ConnectionToClient client) {
-	  sendToAllClients(client.toString()+"is diconected");
+	  sv.display(client.getInfo("login_id")+" is diconected");
   }
 
   /**
@@ -130,17 +130,30 @@ ServerConsole sv;
    */
   synchronized protected void clientException(
     ConnectionToClient client, Throwable exception) {
-	  sendToAllClients("client has disconected");
+	  sendToAllClients(client.getInfo("login_id")+" is diconected");
   }
   
-  public void function(String msg) throws IOException {
+  public void function(String msg){
 	  if(msg.equals("#quit")) {
-		  close();
+		  try {
+			close();
+		} catch (IOException e) {
+			
+		}
+		  System.exit(0);
 	  }else if (msg.equals("#stop")) {
 		  stopListening();
 	  }else if(msg.equals("#close")) {
-		  close();
-	  }else if(msg.equals("sethost")) {
+		  sendToAllClients("WARNING - The server has stopped listening for connections\r\n"
+		  		+ "SERVER SHUTTING DOWN! DISCONNECTING!"
+		  		+ "");
+		  
+		  try {
+			close();
+		} catch (IOException e) {
+			
+		}
+	  }else if(msg.startsWith("#sethost")) {
 		if(isListening()==false) {
 			if(msg.length()>= 10) {
 				setPort(Integer.parseInt(msg.substring(9)));
@@ -150,7 +163,11 @@ ServerConsole sv;
 		}  
 	  }else if(msg.equals("#start")) {
 		  if(isListening()==false) {
-			  listen();
+			  try {
+				listen();
+			} catch (IOException e) {
+				
+			}
 		  }else {
 			  sv.display("server is already on");
 		  }

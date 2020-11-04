@@ -120,7 +120,7 @@ public class ChatClient extends AbstractClient
 	 *            the exception raised.
 	 */
 	protected void connectionException(Exception exception) {
-		System.out.print("Unable to connect to client");
+		clientUI.display("Abnormal termination of connection");
 	}
 	public void holdMessage(String message) throws IOException{
 		if(message.equals("#quit")) {
@@ -128,19 +128,30 @@ public class ChatClient extends AbstractClient
 		}else if(message.equals("#logoff")) {
 			closeConnection();
 		}else if(message.equals("#sethost")) {
-			if(isConnected()==false) {
-				setHost(message.substring(9));
+			if(!isConnected()) {
+				if(message.length()>= 16) {
+					setHost(message.substring(15));
+					clientUI.display("Host set to "+ getHost());
+				}else {
+					clientUI.display("invalid host");
+				}
 			}else {
-				clientUI.display("you are still connected");
+				clientUI.display("cant connect host");
 			}
 		}else if(message.equals("#setport")) {
-			if(isConnected() == false) {
-				setPort(Integer.parseInt(message.substring(9)));
+			if(!isConnected()) {
+				if(message.length()>=16) {
+					setPort(Integer.parseInt(message.substring(15)));
+					clientUI.display("Port set to "+ getPort());
+				}else {
+					clientUI.display("invalid port");
+				}
+				
 			}else {
-				clientUI.display("you are still connected");
+				clientUI.display("cant connect to port");
 			}
 		}else if(message.equals("#login")) {
-			if(isConnected()== false) {
+			if(!isConnected()) {
 				openConnection();
 				handleMessageFromClientUI("#loginID" + loginID);
 			}else {
